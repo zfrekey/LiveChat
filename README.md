@@ -1,3 +1,3 @@
 # LiveChat
 
-Chat P2P desenvolvimento usando React + SpringBoot + WebSocket
+Chat P2P desenvolvimento usando React + Node + WebSocket
