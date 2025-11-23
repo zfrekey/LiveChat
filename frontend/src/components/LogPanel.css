@@ -49,3 +49,25 @@
 .log-lines::-webkit-scrollbar-thumb:hover {
   background: #86a8de;
 }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .log-panel {
+    width: 100%;
+    max-height: 30vh;
+    border-right: none;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+    padding: 0.75rem;
+  }
+
+  .log-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .log-line {
+    font-size: 0.65rem;
+    line-height: 0.95rem;
+    padding: 3px 5px;
+  }
+}

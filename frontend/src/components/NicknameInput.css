@@ -66,3 +66,26 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .nickname-card {
+    padding: 1.5rem;
+    width: 85%;
+  }
+
+  .nickname-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .nickname-card p {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .nickname-card input,
+  .nickname-card button {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+}
