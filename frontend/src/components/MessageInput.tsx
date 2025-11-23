@@ -9,6 +9,7 @@ interface MessageInputProps {
 export function MessageInput({ onSendMessage, onTyping }: MessageInputProps) {
   const [message, setMessage] = useState("");
   const typingTimeoutRef = useRef<number | null>(null);
+  const isTypingRef = useRef(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,14 +37,28 @@ export function MessageInput({ onSendMessage, onTyping }: MessageInputProps) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    if (value.trim()) {
-      onTyping(true);
-      typingTimeoutRef.current = window.setTimeout(() => {
+    const hasContent = !!value.trim();
+
+    if (!hasContent) {
+      if (isTypingRef.current) {
         onTyping(false);
-      }, 1000);
-    } else {
-      onTyping(false);
+        isTypingRef.current = false;
+      }
+      return;
     }
+
+    // Só emite typing true na transição de falso -> verdadeiro
+    if (!isTypingRef.current) {
+      onTyping(true);
+      isTypingRef.current = true;
+    }
+
+    typingTimeoutRef.current = window.setTimeout(() => {
+      if (isTypingRef.current) {
+        onTyping(false);
+        isTypingRef.current = false;
+      }
+    }, 1200);
   };
 
   return (
