@@ -1,0 +1,68 @@
+.nickname-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.nickname-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.nickname-card h1 {
+  margin: 0 0 0.5rem;
+  color: #333;
+  font-size: 2rem;
+}
+
+.nickname-card p {
+  margin: 0 0 1.5rem;
+  color: #666;
+}
+
+.nickname-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nickname-card input {
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.nickname-card input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.nickname-card button {
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.nickname-card button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.nickname-card button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
