@@ -1,16 +1,25 @@
 import { useState } from "react";
-import "./App.css";
+import { NicknameInput } from "./components/NicknameInput";
+import { Chat } from "./components/Chat";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [nickname, setNickname] = useState<string | null>(null);
+
+  const handleJoin = (name: string) => {
+    setNickname(name);
+  };
+
+  const handleDisconnect = () => {
+    setNickname(null);
+  };
 
   return (
     <>
-      <div>
-        <p>LiveChat</p>
-        <p>count is {count}</p>
-        <button onClick={() => setCount(count + 1)}>Increment</button>
-      </div>
+      {!nickname ? (
+        <NicknameInput onJoin={handleJoin} />
+      ) : (
+        <Chat nickname={nickname} onDisconnect={handleDisconnect} />
+      )}
     </>
   );
 }
