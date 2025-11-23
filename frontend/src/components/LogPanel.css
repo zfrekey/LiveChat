@@ -1,0 +1,51 @@
+.log-panel {
+  width: 320px;
+  background: linear-gradient(180deg, #d9e9ff 0%, #b7d2ff 100%);
+  border-right: 2px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem 0.75rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08) inset;
+}
+
+.log-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  font-family: system-ui, sans-serif;
+}
+
+.log-lines {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-right: 4px;
+}
+
+.log-line {
+  font-size: 0.72rem;
+  line-height: 1.05rem;
+  font-family: "SF Mono", "Consolas", "Courier New", monospace;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: #1f2d40;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  white-space: pre-wrap;
+}
+
+.log-lines::-webkit-scrollbar {
+  width: 8px;
+}
+.log-lines::-webkit-scrollbar-track {
+  background: transparent;
+}
+.log-lines::-webkit-scrollbar-thumb {
+  background: #9ab7e6;
+  border-radius: 4px;
+}
+.log-lines::-webkit-scrollbar-thumb:hover {
+  background: #86a8de;
+}
