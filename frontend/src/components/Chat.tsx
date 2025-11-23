@@ -19,6 +19,12 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
   const [socketId, setSocketId] = useState<string>("");
   const [clientIp, setClientIp] = useState<string>("");
   const [logs, setLogs] = useState<string[]>([]);
+  const [showLog, setShowLog] = useState<boolean>(
+    () => window.innerWidth >= 768
+  ); // default hidden on mobile
+  const [isMobile, setIsMobile] = useState<boolean>(
+    () => window.innerWidth < 768
+  );
   const typingStateRef = useRef<Record<string, boolean>>({});
 
   const pushLog = (line: string) => {
@@ -130,6 +136,20 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
     onDisconnect();
   };
 
+  useEffect(() => {
+    const handler = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setShowLog(true); // always show log when moving to desktop
+      }
+    };
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  const toggleLog = () => setShowLog((prev) => !prev);
+
   return (
     <div className="chat-layout">
       <div className="chat-container">
@@ -151,6 +171,15 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
               </span>
             )}
           </div>
+          <button
+            type="button"
+            className="disconnect-button"
+            style={{ background: showLog ? "#2563eb" : "#0d5ad4" }}
+            onClick={toggleLog}
+            aria-pressed={showLog}
+          >
+            {showLog ? "Ocultar Log" : "Mostrar Log"}
+          </button>
           <button className="disconnect-button" onClick={handleDisconnectClick}>
             Sair
           </button>
@@ -165,7 +194,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
           onTyping={handleTyping}
         />
       </div>
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} visible={showLog} overlay={isMobile && showLog} />
     </div>
   );
 }
