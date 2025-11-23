@@ -1,4 +1,4 @@
-# LiveChat — Trabalho: Redes de Computadores 2025.2 (UFF)
+# LiveChat — Redes de Computadores 2025.2 (UFF)
 
 Desenvolvido por: Filype Abreu e Gabriel Câmara
 
@@ -29,7 +29,7 @@ Estrutura do repositório
     - server.ts
     - socket.ts        — implementação do Socket.IO e lógica de chat
     - types/  
-        - socket.ts    - implementação de tipos     
+        - socket.ts    — implementação de tipos     
 - frontend/ (opcional)
 
 Como rodar
