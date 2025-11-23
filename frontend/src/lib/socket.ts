@@ -12,6 +12,7 @@ export interface ServerToClientEvents {
   "chat-message": (msg: ChatMessage) => void;
   "message-ack": (data: { id: string; status: "delivered" }) => void;
   typing: (data: { nickname: string; isTyping: boolean }) => void;
+  "connection-info": (data: { ip: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -36,6 +37,9 @@ function createSocket(): TypedSocket {
   s.on("chat-message", (msg) => console.log("[socket] chat-message:", msg));
   s.on("message-ack", (data) => console.log("[socket] message-ack:", data));
   s.on("typing", (data) => console.log("[socket] typing:", data));
+  s.on("connection-info", (data) =>
+    console.log("[socket] connection-info:", data)
+  );
   s.on("connect_error", (err) =>
     console.warn("[socket] connect_error:", err?.message ?? err)
   );

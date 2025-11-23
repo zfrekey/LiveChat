@@ -17,6 +17,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [socketId, setSocketId] = useState<string>("");
+  const [clientIp, setClientIp] = useState<string>("");
   const [logs, setLogs] = useState<string[]>([]);
   const typingStateRef = useRef<Record<string, boolean>>({});
 
@@ -92,6 +93,10 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
     socket.on("chat-message", handleChatMessage);
     socket.on("typing", handleTyping);
     socket.on("message-ack", handleAck);
+    socket.on("connection-info", (data: { ip: string }) => {
+      setClientIp(data.ip);
+      pushLog(`INFO: Connection info received IP=${data.ip}`);
+    });
 
     connectSocket();
 
@@ -102,6 +107,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
       socket.off("chat-message", handleChatMessage);
       socket.off("typing", handleTyping);
       socket.off("message-ack", handleAck);
+      socket.off("connection-info");
       disconnectSocket();
     };
   }, [nickname]);
@@ -139,7 +145,12 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
             <span className="status-text">
               {isConnected ? `Conectado: ${nickname}` : "Desconectado"}
             </span>
-            {socketId && <span className="socket-id">({socketId})</span>}
+            {socketId && (
+              <span className="socket-id">
+                ({socketId}
+                {clientIp ? ` · ${clientIp}` : ""})
+              </span>
+            )}
           </div>
           <button className="disconnect-button" onClick={handleDisconnectClick}>
             Sair

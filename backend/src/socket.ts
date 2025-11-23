@@ -1,11 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { Server } from "socket.io";
 import { randomUUID } from "crypto";
-import {
-  ChatMessage,
-  TypedIOServer,
-  SocketData,
-} from "./types/socket";
+import { ChatMessage, TypedIOServer, SocketData } from "./types/socket";
 
 const DEFAULT_ROOM = "redes-chat";
 
@@ -35,6 +31,22 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
         `[INFO] Local user (${safeNickname}) joining room “${roomName}”. Attempting to connect...`
       );
 
+      // Determinar IP real (x-forwarded-for preferencial)
+      const forwarded = (
+        socket.handshake.headers["x-forwarded-for"] as string | undefined
+      )
+        ?.split(",")[0]
+        ?.trim();
+      const rawIp =
+        forwarded ||
+        socket.handshake.address ||
+        socket.conn.remoteAddress ||
+        "";
+      const cleanIp = rawIp.replace(/::ffff:/, "");
+
+      // Enviar info de conexão somente para este socket
+      socket.emit("connection-info", { ip: cleanIp });
+
       const msg: ChatMessage = {
         id: randomUUID(),
         author: "Sistema",
@@ -44,7 +56,9 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
 
       socket.to(roomName).emit("system-message", msg);
 
-      fastify.log.info("[INFO] Remote user joined the chat.");
+      fastify.log.info(
+        `[INFO] Remote user joined the chat from IP ${cleanIp}.`
+      );
     });
 
     socket.on("chat-message", ({ text }) => {

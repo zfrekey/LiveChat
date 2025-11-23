@@ -18,6 +18,7 @@ export interface ServerToClientEvents {
   "chat-message": (msg: ChatMessage) => void;
   "message-ack": (data: { id: string; status: "delivered" }) => void;
   typing: (data: { nickname: string; isTyping: boolean }) => void;
+  "connection-info": (data: { ip: string }) => void;
 }
 
 export interface InterServerEvents {}
