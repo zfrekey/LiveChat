@@ -132,7 +132,6 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
 
   return (
     <div className="chat-layout">
-      <LogPanel logs={logs} />
       <div className="chat-container">
         <div className="chat-header">
           <div className="chat-title">Socket Chat</div>
@@ -166,6 +165,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
           onTyping={handleTyping}
         />
       </div>
+      <LogPanel logs={logs} />
     </div>
   );
 }
