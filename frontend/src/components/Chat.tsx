@@ -19,12 +19,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
   const [socketId, setSocketId] = useState<string>("");
   const [clientIp, setClientIp] = useState<string>("");
   const [logs, setLogs] = useState<string[]>([]);
-  const [showLog, setShowLog] = useState<boolean>(
-    () => window.innerWidth >= 768
-  ); // default hidden on mobile
-  const [isMobile, setIsMobile] = useState<boolean>(
-    () => window.innerWidth < 768
-  );
+  // Log sempre visível: removemos toggle e estados móveis
   const typingStateRef = useRef<Record<string, boolean>>({});
 
   const pushLog = (line: string) => {
@@ -136,19 +131,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
     onDisconnect();
   };
 
-  useEffect(() => {
-    const handler = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setShowLog(true); // always show log when moving to desktop
-      }
-    };
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-
-  const toggleLog = () => setShowLog((prev) => !prev);
+  // Removido resize/toggle pois log é fixo agora
 
   return (
     <div className="chat-layout">
@@ -171,15 +154,6 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
               </span>
             )}
           </div>
-          <button
-            type="button"
-            className="disconnect-button"
-            style={{ background: showLog ? "#2563eb" : "#0d5ad4" }}
-            onClick={toggleLog}
-            aria-pressed={showLog}
-          >
-            {showLog ? "Ocultar Log" : "Mostrar Log"}
-          </button>
           <button className="disconnect-button" onClick={handleDisconnectClick}>
             Sair
           </button>
@@ -194,7 +168,7 @@ export function Chat({ nickname, onDisconnect }: ChatProps) {
           onTyping={handleTyping}
         />
       </div>
-      <LogPanel logs={logs} visible={showLog} overlay={isMobile && showLog} />
+      <LogPanel logs={logs} />
     </div>
   );
 }

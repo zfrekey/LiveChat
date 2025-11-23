@@ -8,10 +8,6 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.08) inset;
 }
 
-.log-panel.collapsed {
-  display: none;
-}
-
 .log-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -62,31 +58,6 @@
     border-right: none;
     border-top: 2px solid rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
-  }
-
-  /* Overlay expanded style above input area */
-  .log-panel.overlay {
-    position: fixed;
-    left: 0;
-    bottom: 64px; /* sits above input bar (approx height) */
-    width: 100%;
-    height: 35vh;
-    max-height: 35vh;
-    z-index: 120;
-    border-top: 2px solid rgba(0, 0, 0, 0.15);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
-    animation: slideUp 180ms ease-out;
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
   }
 
   .log-title {
