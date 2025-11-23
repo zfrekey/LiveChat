@@ -3,19 +3,14 @@ import { Server } from "socket.io";
 import { randomUUID } from "crypto";
 import {
   ChatMessage,
-  SocketData,
   TypedIOServer,
+  SocketData,
 } from "./types/socket";
 
 const DEFAULT_ROOM = "redes-chat";
 
 export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
-  const io: TypedIOServer = new Server<
-    any,
-    any,
-    any,
-    SocketData
-  >(fastify.server, {
+  const io: TypedIOServer = new Server(fastify.server, {
     cors: {
       origin: true,
       methods: ["GET", "POST"],
@@ -23,7 +18,10 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
   });
 
   io.on("connection", (socket) => {
-    fastify.log.info(`Novo cliente conectado: ${socket.id}`);
+    const socketId = socket.id;
+
+    fastify.log.info(`[INFO] Socket ${socketId} connected.`);
+    fastify.log.info("[INFO] Connected to the Server.");
 
     socket.on("join", ({ nickname, room }) => {
       const safeNickname = nickname?.trim() || "Anônimo";
@@ -34,17 +32,19 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
       socket.join(roomName);
 
       fastify.log.info(
-        `Socket ${socket.id} entrou na sala "${roomName}" como "${safeNickname}"`
+        `[INFO] Local user (${safeNickname}) joining room “${roomName}”. Attempting to connect...`
       );
 
       const msg: ChatMessage = {
         id: randomUUID(),
         author: "Sistema",
-        text: `${safeNickname} entrou na sala.`,
+        text: `${safeNickname} entrou no chat.`,
         time: new Date().toLocaleTimeString(),
       };
 
       socket.to(roomName).emit("system-message", msg);
+
+      fastify.log.info("[INFO] Remote user joined the chat.");
     });
 
     socket.on("chat-message", ({ text }) => {
@@ -53,22 +53,29 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
       const trimmed = text.trim();
       if (!trimmed) return;
 
+      const messageId = randomUUID();
+      const byteLength = Buffer.byteLength(trimmed, "utf-8");
+
       const message: ChatMessage = {
-        id: randomUUID(),
+        id: messageId,
         author: nickname,
         text: trimmed,
         time: new Date().toLocaleTimeString(),
       };
 
+      fastify.log.info(
+        `[INFO] Local user sending message: “${trimmed}” (Length: ${byteLength} bytes).`
+      );
+
       io.to(room).emit("chat-message", message);
 
       socket.emit("message-ack", {
-        id: message.id,
+        id: messageId,
         status: "delivered",
       });
 
       fastify.log.info(
-        `Mensagem de "${nickname}" na sala "${room}": ${trimmed}`
+        `[SUCCESS] ACK received: Message ID ${messageId} (Delivered).`
       );
     });
 
@@ -77,27 +84,33 @@ export function setupSocketIO(fastify: FastifyInstance): TypedIOServer {
       const nickname = socket.data.nickname || "Alguém";
       if (!room) return;
 
-      socket.to(room).emit("typing", { nickname, isTyping });
+      io.to(room).emit("typing", { nickname, isTyping });
+
+      fastify.log.info(
+        `[INFO] User “${nickname}” is ${isTyping ? "typing..." : "not typing."}`
+      );
     });
 
     socket.on("disconnect", (reason) => {
-      const nickname = socket.data.nickname;
-      const room = socket.data.room;
+      const nickname = socket.data.nickname || "Desconhecido";
+      const room = socket.data.room || DEFAULT_ROOM;
 
-      fastify.log.info(
-        `Socket ${socket.id} (${nickname ?? "desconhecido"}) desconectou: ${reason}`
+      fastify.log.warn(
+        `[INFO] Local user disconnected from the chat. Reason: “${reason}”`
       );
 
-      if (nickname && room) {
-        const msg: ChatMessage = {
-          id: randomUUID(),
-          author: "Sistema",
-          text: `${nickname} saiu da sala.`,
-          time: new Date().toLocaleTimeString(),
-        };
+      const msg: ChatMessage = {
+        id: randomUUID(),
+        author: "Sistema",
+        text: `${nickname} saiu do chat.`,
+        time: new Date().toLocaleTimeString(),
+      };
 
-        socket.to(room).emit("system-message", msg);
-      }
+      socket.to(room).emit("system-message", msg);
+
+      fastify.log.warn(
+        `[WARNING] Remote user disconnected from the chat. Reason: “${reason}”`
+      );
     });
   });
 
